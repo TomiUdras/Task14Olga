@@ -1,33 +1,37 @@
-import csv
+def read_csv(filename):
+  """
+  Reads a CSV file and returns a list of lists, where each inner list represents a row.
+  """
+  data = []
+  with open(filename, 'r') as file:
+    for line in file:
+      row = [cell.strip('"') for cell in line.strip().split(',')]
+      data.append(row)
+  return data
 
-spisok = []
-with open('travel_notes.csv', 'r') as csvfile:
-  reader = csv.reader(csvfile)
-  for row in reader:
-    spisok.append(row)
+
+spisok = read_csv('travel_notes.csv')
 
 l = input()
 want_to_be = []
 already_be = []
 
-for name in spisok:
-  if l == name[0][0]:
-    already_be.append(name[1].split(';'))
-    want_to_be.append(name[2].split(';'))
+for row in spisok:
+  if l == row[0][0]:
+    already_be.append(row[1].split(';'))
+    want_to_be.append(row[2].split(';'))
 
 already_be_sort = list(
-    set([gorod for podspisok in already_be for gorod in podspisok]))
+    set([gorod for sublist in already_be for gorod in sublist]))
+already_be_sort.sort()
+
 want_to_be_sort = list(
-    set([gorod for podspisok in want_to_be for gorod in podspisok]))
+    set([gorod for sublist in want_to_be for gorod in sublist]))
+want_to_be_sort.sort()
 
-unic_city_to_be = []
-for city in want_to_be_sort:
-  if city not in already_be_sort:
-    unic_city_to_be.append(city)
-
-already_be_sort = sorted(already_be_sort)
-want_to_be_sort = sorted(want_to_be_sort)
-unic_city_to_be = sorted(unic_city_to_be)
+unic_city_to_be = [
+    city for city in want_to_be_sort if city not in already_be_sort
+]
 
 v_ioge_edem = ''
 for city in unic_city_to_be:
@@ -47,3 +51,4 @@ lines = [
 
 with open('vacation.csv', 'w', encoding='utf-8') as file:
   file.writelines(lines)
+
